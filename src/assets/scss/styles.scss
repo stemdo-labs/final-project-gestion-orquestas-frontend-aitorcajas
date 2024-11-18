@@ -1,0 +1,33 @@
+@import 'https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,900';
+
+html, body, #app {
+    min-height: 100%;
+    height: 100%;
+}
+
+:root {
+    --indigo-dye: #083d77ff;
+    --beige: #ebebd3ff;
+    --cerise: #da4167ff;
+    --orange-yellow-crayola: #f4d35eff;
+    --coral: #f78764ff;
+    --green: #a1d884;
+
+    --primary: #083d77ff;
+    --secondary: #f4d35eff;
+    --light: #ebebd3ff;
+
+    --base: #363636;
+}
+
+* {
+  // font-family: 'Open Sans';
+}
+
+.grm-link-button {
+  background-color: var(--green)!important;
+  padding: 10px;
+  border-radius: 2px;
+  color: var(--base) !important;
+  text-decoration: none;
+}
