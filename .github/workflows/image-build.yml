@@ -3,7 +3,7 @@ name: Buildear imagen del frontend
 on:
   push:
     branches:
-      - build
+      - main
 
 jobs:
   build:
