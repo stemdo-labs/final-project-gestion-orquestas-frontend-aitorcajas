@@ -1,0 +1,18 @@
+name: Action para crear la imagen y tagearla
+
+inputs:
+  version:
+    required: true
+outputs:
+  image_name:
+    value: ${{steps.imagen_tageada.outputs.image_name}}
+
+runs:
+  using: composite
+  steps:
+    - name: Nombre tageado de la imagen
+      id: imagen_tageada
+      run: |
+        IMAGEN_TAGEADA="acajascr.azurecr.io/frontend:${{inputs.version}}"
+        echo "image_name=$IMAGEN_TAGEADA" >> $GITHUB_OUTPUT
+      shell: bash
