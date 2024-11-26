@@ -1,7 +1,9 @@
 name: Buildear imagen del frontend
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+    - main
 
 jobs:
   build:
