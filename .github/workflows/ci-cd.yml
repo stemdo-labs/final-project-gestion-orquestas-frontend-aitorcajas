@@ -1,0 +1,12 @@
+name: Buildear imagen del frontend
+
+on:
+  workflow_dispatch:
+  # push:
+  #   branches:
+  #   - main
+
+jobs:
+  ci:
+    uses: stemdo-labs/final-project-exercise-aitorcajas/.github/workflows/ci.yml@main
+    secrets: inherit
