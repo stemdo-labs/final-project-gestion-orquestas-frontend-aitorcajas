@@ -1,4 +1,4 @@
-name: Buildear imagen del frontend
+name: CI-CD frontend
 
 on:
   workflow_dispatch:
@@ -9,4 +9,11 @@ on:
 jobs:
   ci:
     uses: stemdo-labs/final-project-exercise-aitorcajas/.github/workflows/ci.yml@main
+    secrets: inherit
+
+  cd:
+    needs: ci
+    uses: stemdo-labs/final-project-exercise-aitorcajas/.github/workflows/cd.yml@develop
+    with:
+      desarrollo: ${{ needs.ci.outputs.desarrollo }}
     secrets: inherit
