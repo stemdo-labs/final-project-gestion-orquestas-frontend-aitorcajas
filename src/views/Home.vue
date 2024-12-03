@@ -27,8 +27,8 @@
             <section>
                 <article>
                     <div>
-                        <h1>Charagua</h1>
-                        <h2>Suena la orilla</h2>
+                        <h1>Rafa es tonto</h1>
+                        <h2>lo dice la orilla</h2>
                     </div>
                     <div>
                         <h3>Últimas noticias</h3>
