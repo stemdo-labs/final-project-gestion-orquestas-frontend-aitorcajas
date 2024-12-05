@@ -2,9 +2,9 @@ name: CI-CD frontend
 
 on:
   workflow_dispatch:
-  # push:
-  #   branches:
-  #   - main
+  push:
+    branches:
+    - main
 
 jobs:
   ci:
