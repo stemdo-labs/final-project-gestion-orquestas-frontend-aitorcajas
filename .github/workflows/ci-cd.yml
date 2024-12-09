@@ -13,7 +13,7 @@ jobs:
 
   cd:
     needs: ci
-    uses: stemdo-labs/final-project-exercise-aitorcajas/.github/workflows/cd.yml@develop
+    uses: stemdo-labs/final-project-exercise-aitorcajas/.github/workflows/cd.yml@main
     with:
       desarrollo: ${{ needs.ci.outputs.desarrollo }}
     secrets: inherit
