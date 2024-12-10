@@ -1,0 +1,17 @@
+#Nombre del namespace donde se desplegará
+namespace: ns-acajas
+
+#Número de replicas
+replicas: 1
+
+# Imagen
+image: acajascr.azurecr.io/frontend-production:1.0.5
+
+# Recursos
+recursos:
+  limites:
+    memoria: "400Mi"
+    cpu: "300m"
+  requests:
+    memoria: "200Mi"
+    cpu: "100m"
