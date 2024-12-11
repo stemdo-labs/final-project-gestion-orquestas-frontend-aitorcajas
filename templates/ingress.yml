@@ -10,14 +10,14 @@ spec:
   - host: 
     http:
       paths:
-      - path: /dev-acajas
+      - path: /development-acajas
         pathType: Prefix
         backend:
           service:
             name: frontend-development
             port:
               number: 80
-      - path: /prod-acajas
+      - path: /production-acajas
         pathType: Prefix
         backend:
           service:
