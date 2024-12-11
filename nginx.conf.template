@@ -24,6 +24,16 @@ server {
         proxy_set_header Connection "";
     }
 
+    location /dev-acajas {
+        rewrite ^/dev-acajas(/|$) /$1 break;
+        proxy_pass http://frontend-development:80;
+    }
+
+    location /prod-acajas {
+        rewrite ^/prod-acajas(/|$) /$1 break;
+        proxy_pass http://frontend-production:80;
+    }
+
     # Páginas de error
     error_page 404 /404.html;
     error_page 500 502 503 504 /50x.html;
