@@ -1,40 +1,72 @@
 pipeline {
     agent {
-        kubernetes {
-            label 'charts-builder'
-            defaultContainer 'tools'
-            yaml """
-apiVersion: v1
-kind: Pod
-spec:
-  containers:
-    - name: tools
-      image: ubuntu:22.04
-      command:
-      - cat
-      tty: true
-      securityContext:
-        privileged: true
-      volumeMounts:
-      - mountPath: "/usr/local/bin"
-        name: bin-volume
-      - mountPath: "/home/jenkins/agent"
-        name: workspace-volume
-      - mountPath: "/var/lib/docker"
-        name: docker-volume
-  volumes:
-  - emptyDir: {}
-    name: bin-volume
-  - emptyDir:
-      medium: ""
-    name: workspace-volume
-  - emptyDir: {}
-    name: docker-volume
-"""
+      kubernetes {
+            label 'jenkins-jenkins-agent'
+            defaultContainer 'dind'
         }
+
+//         kubernetes {
+//             label 'charts-builder'
+//             defaultContainer 'tools'
+//             yaml """
+// apiVersion: v1
+// kind: Pod
+// spec:
+//   containers:
+//     - name: tools
+//       image: ubuntu:22.04
+//       command:
+//       - cat
+//       tty: true
+//       securityContext:
+//         privileged: true
+//       volumeMounts:
+//       - mountPath: "/usr/local/bin"
+//         name: bin-volume
+//       - mountPath: "/home/jenkins/agent"
+//         name: workspace-volume
+//       - mountPath: "/var/lib/docker"
+//         name: docker-volume
+//   volumes:
+//   - emptyDir: {}
+//     name: bin-volume
+//   - emptyDir:
+//       medium: ""
+//     name: workspace-volume
+//   - emptyDir: {}
+//     name: docker-volume
+// """
+        // }
     }
 
     stages {
+        // stage('Preparar Entorno') {
+        //   steps{
+        //       sh '''
+        //           apt-get update && apt-get install -y curl bash git docker.io
+        //           curl -fsSL https://clis.cloud.ibm.com/install/linux | bash
+        //           ibmcloud plugin install container-registry -r 'IBM Cloud'
+        //           dockerd > /var/log/dockerd.log 2>&1 &
+        //           sleep 10
+        //           docker version
+        //           ibmcloud --version
+        //           ibmcloud plugin list
+        //       '''
+        //   }
+        // }
+
+        stage('Checkout') {
+          steps {
+            checkout scm
+          }
+        }
+
+        stage('Probar docker') {
+          steps {
+            sh 'docker --version'
+          }
+        }
+
         stage('Clonar repositorio principal') {
             steps {
                 script {
@@ -57,8 +89,12 @@ spec:
         stage('CI') {
             steps {
                 script {
-                    def ci = load 'repo-principal/vars/ci.groovy'
-                    ci.ci(env.ENVIRONMENT, env.DEVELOPMENT)
+                    def repoName = env.REPO_NAME ?: sh(script: "echo ${env.GIT_URL} | awk -F'/' '{print \$NF}' | sed 's/.git\$//'", returnStdout: true).trim()
+                    build job: 'ci', parameters: [
+                      string(name: 'desarrollo', value: env.DEVELOPMENT),
+                      string(name: 'entorno', value: env.ENVIRONMENT),
+                      string(name: 'repo', value: repoName)
+                    ]
                 }
             }
         }
