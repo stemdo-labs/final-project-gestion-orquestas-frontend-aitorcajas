@@ -9,7 +9,7 @@ kind: Pod
 spec:
   containers:
     - name: tools
-      image: node:16 # Usa una imagen base con Node.js y jq
+      image: ubuntu:22.04
       command:
       - cat
       tty: true
@@ -50,6 +50,16 @@ spec:
                 script {
                     def environment = load 'repo-principal/vars/environment.groovy'
                     environment.environment()
+                }
+            }
+        }
+
+        stage('Install jq') {
+            steps {
+                script {
+                    if(env.DEVELOPMENT.contains('frontend')) {
+                        sh 'apt-get update && apt-get install -y jq'
+                    }
                 }
             }
         }
