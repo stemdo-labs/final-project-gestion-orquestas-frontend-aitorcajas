@@ -54,16 +54,6 @@ spec:
             }
         }
 
-        stage('Install jq') {
-            steps {
-                script {
-                    if(env.DEVELOPMENT.contains('frontend')) {
-                        sh 'apt-get update && apt-get install -y jq'
-                    }
-                }
-            }
-        }
-
         stage('CI') {
             steps {
                 script {
