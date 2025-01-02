@@ -61,12 +61,6 @@ pipeline {
           }
         }
 
-        stage('Probar docker') {
-          steps {
-            sh 'docker --version'
-          }
-        }
-
         stage('Clonar repositorio principal') {
             steps {
                 script {
@@ -89,11 +83,10 @@ pipeline {
         stage('CI') {
             steps {
                 script {
-                    def repoName = env.REPO_NAME ?: sh(script: "echo ${env.GIT_URL} | awk -F'/' '{print \$NF}' | sed 's/.git\$//'", returnStdout: true).trim()
                     build job: 'ci', parameters: [
                       string(name: 'desarrollo', value: env.DEVELOPMENT),
                       string(name: 'entorno', value: env.ENVIRONMENT),
-                      string(name: 'repo', value: repoName)
+                      string(name: 'repo', value: env.REPO)
                     ]
                 }
             }
