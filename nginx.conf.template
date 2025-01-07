@@ -14,7 +14,7 @@ server {
     }
 
     # Redirección de las peticiones de la API al backend
-    location /ENVIRONMENT-acajas {
+    location /api {
         proxy_pass http://backend-ENVIRONMENT:8080;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
