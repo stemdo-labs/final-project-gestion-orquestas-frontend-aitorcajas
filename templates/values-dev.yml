@@ -1,11 +1,11 @@
 #Nombre del namespace donde se desplegará
-namespace: ns-acajas
+namespace: acajas
 
 #Número de replicas
 replicas: 1
 
 # Imagen
-image: acajascr.azurecr.io/frontend-development:1.0.10
+image: icr.io/acajas-cr/frontend-development:1.0.10
 
 # Recursos
 recursos:
