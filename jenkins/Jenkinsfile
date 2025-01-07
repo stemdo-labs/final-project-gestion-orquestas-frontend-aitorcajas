@@ -83,9 +83,24 @@ pipeline {
         stage('CI') {
             steps {
                 script {
+                    def repoName = env.REPO_NAME ?: sh(script: "echo ${env.GIT_URL} | awk -F'/' '{print \$NF}' | sed 's/.git\$//'", returnStdout: true).trim()
+                    env.REPO = repoName
                     build job: 'ci', parameters: [
                       string(name: 'desarrollo', value: env.DEVELOPMENT),
                       string(name: 'entorno', value: env.ENVIRONMENT),
+                      string(name: 'repo', value: env.REPO)
+                    ]
+                }
+            }
+        }
+
+        stage('CD') {
+            steps {
+                script {
+                    def repoName = env.REPO_NAME ?: sh(script: "echo ${env.GIT_URL} | awk -F'/' '{print \$NF}' | sed 's/.git\$//'", returnStdout: true).trim()
+                    env.REPO = repoName
+                    build job: 'cd', parameters: [
+                      string(name: 'desarrollo', value: env.DEVELOPMENT),
                       string(name: 'repo', value: env.REPO)
                     ]
                 }
