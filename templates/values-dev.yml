@@ -5,7 +5,7 @@ namespace: acajas
 replicas: 1
 
 # Imagen
-image: icr.io/acajas-cr/frontend-development:1.0.10
+image: icr.io/acajas-cr/frontend-development:1.0.0
 
 # Recursos
 recursos:
