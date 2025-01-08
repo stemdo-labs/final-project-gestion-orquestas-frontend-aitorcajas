@@ -27,8 +27,6 @@ spec:
         name: workspace-volume
   volumes:
   - emptyDir: {}
-    name: docker-sock
-  - emptyDir: {}
     name: bin-volume
   - emptyDir:
       medium: ""
