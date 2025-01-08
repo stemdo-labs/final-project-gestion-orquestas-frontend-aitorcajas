@@ -26,9 +26,8 @@ spec:
       - mountPath: "/home/jenkins/agent"
         name: workspace-volume
   volumes:
-  - name: docker-sock
-    hostPath:
-      path: /var/run/docker.sock
+  - emptyDir: {}
+    name: docker-sock
   - emptyDir: {}
     name: bin-volume
   - emptyDir:
