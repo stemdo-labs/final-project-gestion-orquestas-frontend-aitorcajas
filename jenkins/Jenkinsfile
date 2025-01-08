@@ -6,15 +6,14 @@ pipeline {
     //     }
 
         kubernetes {
-            label 'jenkins-jenkins-agent'
-            defaultContainer 'dind'
+            defaultContainer 'jenkins-acajas'
             yaml """
 apiVersion: v1
 kind: Pod
 spec:
   containers:
-    - name: dind
-      image: jooeel98/agente-jenkins:0.2.1
+    - name: jenkins-acajas
+      image: aitorcajas/jenkins-acajas:1.0.0
       command:
       - cat
       tty: true
