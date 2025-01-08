@@ -13,7 +13,7 @@ kind: Pod
 spec:
   containers:
     - name: jenkins-acajas
-      image: aitorcajas/jenkins-acajas:1.0.0
+      image: aitorcajas/jenkins-acajas:1.0.1
       command:
       - cat
       tty: true
