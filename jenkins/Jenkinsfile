@@ -1,43 +1,44 @@
 pipeline {
     agent {
-      kubernetes {
-            label 'jenkins-jenkins-agent'
-            defaultContainer 'dind'
+      // kubernetes {
+      //       label 'jenkins-jenkins-agent'
+      //       defaultContainer 'dind'
+      //   }
+
+        kubernetes {
+            label 'jenkins-agent-acajas'
+            defaultContainer 'jenkins-acajas'
+            yaml """
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+    - name: jenkins-acajas
+      image: jooeel98/agente-jenkins:0.3.1
+      command:
+      - cat
+      tty: true
+      securityContext:
+        privileged: true
+      volumeMounts:
+      - name: docker-sock
+        mountPath: /var/run/docker.sock
+      - mountPath: "/usr/local/bin"
+        name: bin-volume
+      - mountPath: "/home/jenkins/agent"
+        name: workspace-volume
+  volumes:
+  - name: docker-sock
+    hostPath:
+      path: /var/run/docker.sock
+  - emptyDir: {}
+    name: bin-volume
+  - emptyDir:
+      medium: ""
+    name: workspace-volume
+
+"""
         }
-
-//         kubernetes {
-//             defaultContainer 'jenkins-acajas'
-//             yaml """
-// apiVersion: v1
-// kind: Pod
-// spec:
-//   containers:
-//     - name: jenkins-acajas
-//       image: aitorcajas/jenkins-acajas:1.0.1
-//       command:
-//       - cat
-//       tty: true
-//       securityContext:
-//         privileged: true
-//       volumeMounts:
-//       - name: docker-sock
-//         mountPath: /var/run/docker.sock
-//       - mountPath: "/usr/local/bin"
-//         name: bin-volume
-//       - mountPath: "/home/jenkins/agent"
-//         name: workspace-volume
-//   volumes:
-//   - name: docker-sock
-//     hostPath:
-//       path: /var/run/docker.sock
-//   - emptyDir: {}
-//     name: bin-volume
-//   - emptyDir:
-//       medium: ""
-//     name: workspace-volume
-
-// """
-//         }
     }
 
     stages {
