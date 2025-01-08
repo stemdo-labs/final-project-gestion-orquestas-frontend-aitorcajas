@@ -21,6 +21,8 @@ spec:
       securityContext:
         privileged: true
       volumeMounts:
+      - name: docker-sock
+        mountPath: /var/run/docker.sock
       - mountPath: "/home/jenkins/agent"
         name: workspace-volume
   volumes:
