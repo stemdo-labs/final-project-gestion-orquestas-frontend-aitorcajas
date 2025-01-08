@@ -13,7 +13,7 @@ apiVersion: v1
 kind: Pod
 spec:
   containers:
-    - name: jenkins-acajas
+    - name: acajas
       image: jooeel98/agente-jenkins:0.3.1
       command:
       - cat
@@ -21,18 +21,21 @@ spec:
       securityContext:
         privileged: true
       volumeMounts:
-      - name: docker-sock
-        mountPath: /var/run/docker.sock
+      - mountPath: "/usr/local/bin"
+        name: bin-volume
       - mountPath: "/home/jenkins/agent"
         name: workspace-volume
+      - mountPath: "/var/lib/docker"
+        name: docker-volume
+ 
   volumes:
-  - name: docker-sock
-    hostPath:
-      path: /var/run/docker.sock
-      type: Socket
+  - emptyDir: {}
+    name: bin-volume
   - emptyDir:
       medium: ""
     name: workspace-volume
+  - emptyDir: {}
+    name: docker-volume
 """
         }
     }
