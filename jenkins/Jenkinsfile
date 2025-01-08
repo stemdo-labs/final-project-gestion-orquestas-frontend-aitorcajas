@@ -26,8 +26,6 @@ spec:
         name: bin-volume
       - mountPath: "/home/jenkins/agent"
         name: workspace-volume
-      - mountPath: "/var/lib/docker"
-        name: docker-volume
   volumes:
   - name: docker-sock
     hostPath:
@@ -37,8 +35,6 @@ spec:
   - emptyDir:
       medium: ""
     name: workspace-volume
-  - emptyDir: {}
-    name: docker-volume
 """
         }
     }
