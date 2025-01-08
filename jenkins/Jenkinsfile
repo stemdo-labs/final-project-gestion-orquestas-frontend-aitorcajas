@@ -56,6 +56,11 @@ spec:
         //       '''
         //   }
         // }
+        stage('Sleep') {
+          steps{
+            sh 'sleep 300s'
+          }
+        }
 
         stage('Checkout') {
           steps {
