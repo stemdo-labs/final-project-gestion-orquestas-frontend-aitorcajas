@@ -7,7 +7,7 @@ pipeline {
 
         kubernetes {
             label 'jenkins-agent-acajas'
-            defaultContainer 'jenkins-acajas'
+            defaultContainer 'acajas'
             yaml """
 apiVersion: v1
 kind: Pod
