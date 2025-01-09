@@ -101,7 +101,7 @@ pipeline {
                 script {
                     def repoName = env.REPO_NAME ?: sh(script: "echo ${env.GIT_URL} | awk -F'/' '{print \$NF}' | sed 's/.git\$//'", returnStdout: true).trim()
                     env.REPOSITORIO = repoName
-                    echo "Nombre del repositorio para el CI: ${env.REPOSITORIO}"
+                    echo "Nombre del repositorio para el CD: ${env.REPOSITORIO}"
                     build job: 'cd', parameters: [
                       string(name: 'desarrollo', value: env.DEVELOPMENT),
                       string(name: 'repo', value: env.REPOSITORIO)
