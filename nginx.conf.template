@@ -22,10 +22,6 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
         proxy_http_version 1.1;
         proxy_set_header Connection "";
-        root /usr/share/nginx/html;
-        index index.html;
-        rewrite ^/ENVIRONMENT-acajas(/.*)$ $1 break;
-        try_files $uri $uri/ /index.html;
     }
     
     # Páginas de error
