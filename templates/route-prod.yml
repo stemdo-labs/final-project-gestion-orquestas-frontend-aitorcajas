@@ -1,0 +1,12 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: frontend
+  namespace: acajas
+spec:
+  path: /
+  to:
+    kind: Service
+    name: frontend-production
+  port:
+    targetPort: 8090
