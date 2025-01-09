@@ -1,46 +1,43 @@
 pipeline {
     agent {
-    //   kubernetes {
-    //         label 'jenkins-jenkins-agent'
-    //         defaultContainer 'dind'
-    //     }
-
-        kubernetes {
-            defaultContainer 'jenkins-acajas'
-            yaml """
-apiVersion: v1
-kind: Pod
-spec:
-  containers:
-    - name: jenkins-acajas
-      image: aitorcajas/jenkins-acajas:1.0.5
-      command:
-      - cat
-      tty: true
-      securityContext:
-        privileged: true
-      volumeMounts:
-      - name: docker-sock
-        mountPath: /var/run/docker.sock
-      - mountPath: "/usr/local/bin"
-        name: bin-volume
-      - mountPath: "/home/jenkins/agent"
-        name: workspace-volume
-      - mountPath: "/var/lib/docker"
-        name: docker-volume
-  volumes:
-  - name: docker-sock
-    hostPath:
-      path: /var/run/docker.sock
-  - emptyDir: {}
-    name: bin-volume
-  - emptyDir:
-      medium: ""
-    name: workspace-volume
-  - emptyDir: {}
-    name: docker-volume
-"""
+      kubernetes {
+            label 'jenkins-jenkins-agent'
+            defaultContainer 'dind'
         }
+
+//         kubernetes {
+//             label 'jenkins-agent-acajas'
+//             defaultContainer 'acajas'
+//             yaml """
+// apiVersion: v1
+// kind: Pod
+// spec:
+//   containers:
+//     - name: acajas
+//       image: jooeel98/agente-jenkins:0.3.1
+//       command:
+//       - cat
+//       tty: true
+//       securityContext:
+//         privileged: true
+//       volumeMounts:
+//       - mountPath: "/usr/local/bin"
+//         name: bin-volume
+//       - mountPath: "/home/jenkins/agent"
+//         name: workspace-volume
+//       - mountPath: "/var/lib/docker"
+//         name: docker-volume
+ 
+//   volumes:
+//   - emptyDir: {}
+//     name: bin-volume
+//   - emptyDir:
+//       medium: ""
+//     name: workspace-volume
+//   - emptyDir: {}
+//     name: docker-volume
+// """
+//         }
     }
 
     stages {
@@ -89,6 +86,7 @@ spec:
                 script {
                     def repoName = env.REPO_NAME ?: sh(script: "echo ${env.GIT_URL} | awk -F'/' '{print \$NF}' | sed 's/.git\$//'", returnStdout: true).trim()
                     env.REPO = repoName
+                    echo "Nombre del repositorio para el CI: ${env.REPO}"
                     build job: 'ci', parameters: [
                       string(name: 'desarrollo', value: env.DEVELOPMENT),
                       string(name: 'entorno', value: env.ENVIRONMENT),
@@ -103,6 +101,7 @@ spec:
                 script {
                     def repoName = env.REPO_NAME ?: sh(script: "echo ${env.GIT_URL} | awk -F'/' '{print \$NF}' | sed 's/.git\$//'", returnStdout: true).trim()
                     env.REPO = repoName
+                    echo "Nombre del repositorio para el CI: ${env.REPO}"
                     build job: 'cd', parameters: [
                       string(name: 'desarrollo', value: env.DEVELOPMENT),
                       string(name: 'repo', value: env.REPO)
