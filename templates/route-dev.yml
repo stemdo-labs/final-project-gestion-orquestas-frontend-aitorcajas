@@ -10,3 +10,5 @@ spec:
     name: frontend-development
   port:
     targetPort: 8090
+  tls:
+    termination: edge
