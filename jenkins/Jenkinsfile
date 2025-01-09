@@ -85,12 +85,12 @@ pipeline {
             steps {
                 script {
                     def repoName = env.REPO_NAME ?: sh(script: "echo ${env.GIT_URL} | awk -F'/' '{print \$NF}' | sed 's/.git\$//'", returnStdout: true).trim()
-                    env.REPO = repoName
-                    echo "Nombre del repositorio para el CI: ${env.REPO}"
+                    env.REPOSITORIO = repoName
+                    echo "Nombre del repositorio para el CI: ${env.REPOSITORIO}"
                     build job: 'ci', parameters: [
                       string(name: 'desarrollo', value: env.DEVELOPMENT),
                       string(name: 'entorno', value: env.ENVIRONMENT),
-                      string(name: 'repo', value: env.REPO)
+                      string(name: 'repo', value: env.REPOSITORIO)
                     ]
                 }
             }
@@ -100,11 +100,11 @@ pipeline {
             steps {
                 script {
                     def repoName = env.REPO_NAME ?: sh(script: "echo ${env.GIT_URL} | awk -F'/' '{print \$NF}' | sed 's/.git\$//'", returnStdout: true).trim()
-                    env.REPO = repoName
-                    echo "Nombre del repositorio para el CI: ${env.REPO}"
+                    env.REPOSITORIO = repoName
+                    echo "Nombre del repositorio para el CI: ${env.REPOSITORIO}"
                     build job: 'cd', parameters: [
                       string(name: 'desarrollo', value: env.DEVELOPMENT),
-                      string(name: 'repo', value: env.REPO)
+                      string(name: 'repo', value: env.REPOSITORIO)
                     ]
                 }
             }
