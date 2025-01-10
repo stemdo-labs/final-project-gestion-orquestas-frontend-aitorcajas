@@ -6,7 +6,7 @@ metadata:
   name: frontend-dev
   namespace: acajas
 spec:
-  path: /backend-development
+  path: /development-acajas
   to:
     kind: Service
     name: frontend-development
