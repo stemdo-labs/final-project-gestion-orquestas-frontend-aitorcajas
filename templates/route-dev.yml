@@ -1,12 +1,21 @@
 apiVersion: route.openshift.io/v1
-kind: Route
+kind: Route   
 metadata:
+  annotations:
+     haproxy.router.openshift.io/rewrite-target: /
   name: frontend-dev
   namespace: acajas
 spec:
-  path: /
+  path: /backend-development
   to:
     kind: Service
     name: frontend-development
   port:
     targetPort: 8090
+  # tls:
+  #   termination: edge  # O 'passthrough', según lo que necesites
+  #   certificate:
+  #     secretName: frontend-tls  # Nombre del secreto con el certificado
+  #   caCertificate:
+  #     secretName: aitor-ca-cert  # El secreto de la CA
+  #   insecureEdgeTerminationPolicy: Redirect
