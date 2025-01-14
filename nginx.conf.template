@@ -1,5 +1,5 @@
 server {
-    listen 80;
+    listen 8090;
     server_name localhost;
 
     # Raíz del frontend
@@ -14,7 +14,7 @@ server {
     }
 
     # Redirección de las peticiones de la API al backend
-    location /api/ {
+    location /api {
         proxy_pass http://backend-ENVIRONMENT:8080;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
@@ -23,7 +23,7 @@ server {
         proxy_http_version 1.1;
         proxy_set_header Connection "";
     }
-
+    
     # Páginas de error
     error_page 404 /404.html;
     error_page 500 502 503 504 /50x.html;

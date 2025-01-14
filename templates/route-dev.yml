@@ -1,0 +1,21 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: frontend-dev
+  namespace: acajas
+spec:
+  path: /
+  to:
+    kind: Service
+    name: frontend-development
+  port:
+    targetPort: 8090
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+    certificate: |
+      
+    key: |
+      
+    caCertificate: |
+      

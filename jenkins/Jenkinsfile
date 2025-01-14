@@ -1,0 +1,93 @@
+pipeline {
+    agent {
+        kubernetes {
+            label 'acajas'
+            defaultContainer 'acajas'
+            yaml """
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+  - name: acajas
+    image: jooeel98/agente-jenkins:0.3.1
+    command:
+    - cat
+    tty: true
+    securityContext:
+      privileged: true
+"""
+        }
+    }
+
+    stages {
+        // stage('Preparar Entorno') {
+        //   steps{
+        //       sh '''
+        //           apt-get update && apt-get install -y curl bash git docker.io
+        //           curl -fsSL https://clis.cloud.ibm.com/install/linux | bash
+        //           ibmcloud plugin install container-registry -r 'IBM Cloud'
+        //           dockerd > /var/log/dockerd.log 2>&1 &
+        //           sleep 10
+        //           docker version
+        //           ibmcloud --version
+        //           ibmcloud plugin list
+        //       '''
+        //   }
+        // }
+
+        stage('Checkout') {
+          steps {
+            checkout scm
+          }
+        }
+
+        stage('Clonar repositorio principal') {
+            steps {
+                script {
+                    dir('repo-principal') {
+                        git branch: 'develop', url: 'https://github.com/stemdo-labs/iac-ibmcloud-aitorcajas.git'
+                    }
+                }
+            }
+        }
+
+        stage('Entorno') {
+            steps {
+                script {
+                    def environment = load 'repo-principal/vars/environment.groovy'
+                    environment.environment()
+                }
+            }
+        }
+
+        stage('CI') {
+            steps {
+                script {
+                    def repoName = env.REPO_NAME ?: sh(script: "echo ${env.GIT_URL} | awk -F'/' '{print \$NF}' | sed 's/.git\$//'", returnStdout: true).trim()
+                    env.REPOSITORIO = repoName
+                    echo "Nombre del repositorio para el CI: ${env.REPOSITORIO}"
+                    build job: 'ci', parameters: [
+                      string(name: 'desarrollo', value: env.DEVELOPMENT),
+                      string(name: 'entorno', value: env.ENVIRONMENT),
+                      string(name: 'repo', value: env.REPOSITORIO)
+                    ]
+                }
+            }
+        }
+
+        stage('CD') {
+            steps {
+                script {
+                    def repoName = env.REPO_NAME ?: sh(script: "echo ${env.GIT_URL} | awk -F'/' '{print \$NF}' | sed 's/.git\$//'", returnStdout: true).trim()
+                    env.REPOSITORIO = repoName
+                    echo "Nombre del repositorio para el CD: ${env.REPOSITORIO}"
+                    echo "Nombre del desarrollo: ${env.DEVELOPMENT}"
+                    build job: 'cd', parameters: [
+                      string(name: 'desarrollo', value: env.DEVELOPMENT),
+                      string(name: 'repo', value: env.REPOSITORIO)
+                    ]
+                }
+            }
+        }
+    }
+}

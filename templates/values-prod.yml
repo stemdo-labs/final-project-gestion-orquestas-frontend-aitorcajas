@@ -5,7 +5,7 @@ namespace: ns-acajas
 replicas: 1
 
 # Imagen
-image: acajascr.azurecr.io/frontend-production:1.0.5
+image: acajascr.azurecr.io/frontend-production:1.0.7
 
 # Recursos
 recursos:

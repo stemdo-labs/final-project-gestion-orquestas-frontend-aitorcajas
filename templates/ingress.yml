@@ -1,25 +1,26 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: frontend-ingress
+  name: acajas-ingress
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
+  ingressClassName: nginx
   rules:
-  - host: aitorcajasproyecto.com
+  - host: 
     http:
       paths:
-      - path: /dev
+      - path: /development-acajas
         pathType: Prefix
         backend:
           service:
             name: frontend-development
             port:
-              number: 30000
-      - path: /prod
+              number: 80
+      - path: /production-acajas
         pathType: Prefix
         backend:
           service:
             name: frontend-production
             port:
-              number: 30000
+              number: 80
