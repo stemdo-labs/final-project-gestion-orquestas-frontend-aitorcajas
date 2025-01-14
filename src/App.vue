@@ -1,4 +1,5 @@
 <template>
+  
   <div id="app" data-app>
     <admin-layout v-if="currentLayout == 'admin'">
       <router-view />
