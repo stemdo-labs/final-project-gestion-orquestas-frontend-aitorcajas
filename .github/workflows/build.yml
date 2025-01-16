@@ -15,13 +15,13 @@ jobs:
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
 
-      - name: Set hash in sonar-project.properties
+      - name: Extraer versión
         run: |
-          HASH_SHORT=${GITHUB_SHA::7}
+          VERSION=$(jq -r '.version' package.json)
           if grep -q "^sonar.projectVersion=" sonar-project.properties; then
-            sed -i "s/^sonar.projectVersion=.*/sonar.projectVersion=$HASH_SHORT/" sonar-project.properties
+            sed -i "s/^sonar.projectVersion=.*/sonar.projectVersion=$VERSION/" sonar-project.properties
           else
-            echo "sonar.projectVersion=$HASH_SHORT" >> sonar-project.properties
+            echo "sonar.projectVersion=$VERSION" >> sonar-project.properties
           fi
 
       - uses: sonarsource/sonarqube-scan-action@v4
