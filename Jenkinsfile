@@ -4,19 +4,16 @@ node {
     }
 
     stage('Extraer versión') {
-        steps {
-            script {
-                // Ejecutar el bloque de comandos
-                sh '''
-                    VERSION=$(jq -r '.version' package.json)
-                    if grep -q "^sonar.projectVersion=" sonar-project.properties; then
-                        sed -i "s/^sonar.projectVersion=.*/sonar.projectVersion=$VERSION/" sonar-project.properties
-                    else
-                        echo "sonar.projectVersion=$VERSION" >> sonar-project.properties
-                    fi
-                '''
+        script {
+            sh '''
+                VERSION=$(jq -r '.version' package.json)
+                if grep -q "^sonar.projectVersion=" sonar-project.properties; then
+                    sed -i "s/^sonar.projectVersion=.*/sonar.projectVersion=$VERSION/" sonar-project.properties
+                else
+                    echo "sonar.projectVersion=$VERSION" >> sonar-project.properties
+                fi
+            '''
             }
-        }
     }
 
     stage('SonarQube Analysis') {
