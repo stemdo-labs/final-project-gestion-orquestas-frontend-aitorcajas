@@ -27,16 +27,18 @@ spec:
         }
 
         stage('Extraer versión') {
-            steps{
+            steps {
                 script {
-                    sh '''
-                        VERSION=$(jq -r '.version' package.json)
-                        if grep -q "^sonar.projectVersion=" sonar-project.properties; then
-                            sed -i "s/^sonar.projectVersion=.*/sonar.projectVersion=$VERSION/" sonar-project.properties
-                        else
-                            echo "sonar.projectVersion=$VERSION" >> sonar-project.properties
-                        fi
-                    '''
+                    // Usar la función de la librería
+                    def version = extractVersionFromJson('package.json')
+                    echo "Versión extraída: ${version}"
+                    if (fileExists('sonar-project.properties')) {
+                        def properties = readProperties file: 'sonar-project.properties'
+                        properties['sonar.projectVersion'] = version
+                        writeProperties file: 'sonar-project.properties', properties: properties
+                    } else {
+                        writeFile file: 'sonar-project.properties', text: "sonar.projectVersion=${version}"
+                    }
                 }
             }
         }
