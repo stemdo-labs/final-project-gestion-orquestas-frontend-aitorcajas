@@ -43,9 +43,11 @@ spec:
 
         stage('SonarQube Analysis') {
             steps{
-                def scannerHome = tool 'sonar-scanner';
-                withSonarQubeEnv() {
-                    sh "${scannerHome}/bin/sonar-scanner"
+                script{
+                    def scannerHome = tool 'sonar-scanner';
+                    withSonarQubeEnv() {
+                        sh "${scannerHome}/bin/sonar-scanner"
+                    }
                 }
             }
         }
