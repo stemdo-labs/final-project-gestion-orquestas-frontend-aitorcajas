@@ -63,6 +63,9 @@ jobs:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         continue-on-error: true
 
+      - name: List files
+        run: ls -la
+
       - name: Upload SonarQube report artifact
         uses: actions/upload-artifact@v3
         with:
