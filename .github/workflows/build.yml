@@ -22,10 +22,10 @@ jobs:
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "app_version=$VERSION" >> $GITHUB_OUTPUT
 
-      - name: Setup Java 17
+      - name: Setup Java 20
         uses: actions/setup-java@v3
         with:
-          java-version: '17'
+          java-version: '20'
           distribution: 'temurin'
 
       - name: Verificar versión de Java
@@ -36,7 +36,7 @@ jobs:
           curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.8.0.2856-linux.zip
           unzip sonar-scanner.zip -d $HOME
           echo "$HOME/sonar-scanner-4.8.0.2856-linux/bin" >> $GITHUB_PATH
-          export JAVA_HOME=/opt/hostedtoolcache/Java_Temurin_jdk/17*/x64  # Asegura que JAVA_HOME apunte a Java 17
+          export JAVA_HOME=/opt/hostedtoolcache/Java_Temurin_jdk/20*/x64
           export PATH=$JAVA_HOME/bin:$PATH
 
       - name: Escanear código mediante SonarQube
