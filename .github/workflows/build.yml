@@ -51,8 +51,10 @@ jobs:
           VERSION=$(jq -r '.version' package.json)
           if grep -q "^sonar.projectVersion=" sonar-project.properties; then
             sed -i "s/^sonar.projectVersion=.*/sonar.projectVersion=$VERSION/" sonar-project.properties
+            cat sonar-project.properties
           else
             echo "sonar.projectVersion=$VERSION" >> sonar-project.properties
+            cat sonar-project.properties
           fi
       
       - uses: sonarsource/sonarqube-scan-action@v4
