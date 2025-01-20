@@ -15,12 +15,12 @@ jobs:
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
 
-      # - name: Extraer versión
-      #   id: version
-      #   run: |
-      #     VERSION=$(jq -r '.version' package.json)
-      #     echo "VERSION=$VERSION" >> $GITHUB_ENV
-      #     echo "app_version=$VERSION" >> $GITHUB_OUTPUT
+      - name: Extraer versión
+        id: version
+        run: |
+          VERSION=$(jq -r '.version' package.json)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "app_version=$VERSION" >> $GITHUB_OUTPUT
 
       # - name: Setup Java 20
       #   uses: actions/setup-java@v3
@@ -46,31 +46,40 @@ jobs:
       #   run: |
       #     sonar-scanner -X -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=$SONAR_TOKEN -Dsonar.projectVersion=${{steps.version.outputs.app_version}}
 
-      - name: Extraer versión
-        run: |
-          VERSION=$(jq -r '.version' package.json)
-          if grep -q "^sonar.projectVersion=" sonar-project.properties; then
-            sed -i "s/^sonar.projectVersion=.*/sonar.projectVersion=$VERSION/" sonar-project.properties
-          else
-            echo "sonar.projectVersion=$VERSION" >> sonar-project.properties
-          fi
-          cat sonar-project.properties
+      # - name: Extraer versión
+      #   run: |
+      #     VERSION=$(jq -r '.version' package.json)
+      #     if grep -q "^sonar.projectVersion=" sonar-project.properties; then
+      #       sed -i "s/^sonar.projectVersion=.*/sonar.projectVersion=$VERSION/" sonar-project.properties
+      #     else
+      #       echo "sonar.projectVersion=$VERSION" >> sonar-project.properties
+      #     fi
+      #     cat sonar-project.properties
 
-      
       - uses: sonarsource/sonarqube-scan-action@v4
+        with:
+          args: >
+            -Dsonar.projectVersion=${{ steps.version.outputs.app_version }}
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         continue-on-error: true
 
       - name: List files
+        id: extract_task_id
         run: |
           ls -la
           ls -la .scannerwork
           cat .scannerwork/report-task.txt
+          TASK_ID=$(cat .scannerwork/report-task.txt | grep -oP 'ceTaskId=\K.*')
+          echo "TASK_ID=$TASK_ID" >> $GITHUB_OUTPUT
+
+      - name: Generar reporte
+        run: |
+          curl -u ${{ secrets.SONAR_TOKEN }}: "${{ secrets.SONAR_HOST_URL }}/api/ce/task?id=${{ steps.extract_task_id.outputs.TASK_ID }}" > report.json
 
       - name: Upload SonarQube report artifact
         uses: actions/upload-artifact@v3
         with:
           name: sonar-report
-          path: ./report.json
+          path: report.json
