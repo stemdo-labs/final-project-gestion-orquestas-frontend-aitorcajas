@@ -67,6 +67,7 @@ jobs:
         run: |
           ls -la
           ls -la .scannerwork
+          cat .scannerwork/report-task.txt
 
       - name: Upload SonarQube report artifact
         uses: actions/upload-artifact@v3
