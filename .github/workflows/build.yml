@@ -22,6 +22,12 @@ jobs:
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "app_version=$VERSION" >> $GITHUB_OUTPUT
 
+      - name: Setup Java 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
       - name: Install SonarScanner
         run: |
           curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.8.0.2856-linux.zip
@@ -33,7 +39,7 @@ jobs:
             SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
             SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: |
-          sonar-scanner -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=$SONAR_TOKEN -Dsonar.projectVersion=${{steps.version.outputs.app_version}}
+          sonar-scanner -X -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=$SONAR_TOKEN -Dsonar.projectVersion=${{steps.version.outputs.app_version}}
 
       # - uses: sonarsource/sonarqube-scan-action@v4
       #   env:
