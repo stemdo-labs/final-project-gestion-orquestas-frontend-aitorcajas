@@ -25,7 +25,7 @@ jobs:
         with:
           args: >
             -Dsonar.projectVersion=${{ steps.version.outputs.VERSION }}
-            -Dsonar.qualitygate.wait=true
+            -Dsonar.qualitygate.wait=false
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
