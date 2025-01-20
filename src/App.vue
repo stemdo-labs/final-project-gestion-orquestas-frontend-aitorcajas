@@ -62,11 +62,11 @@ export default {
       if (currentUser && this.currentUserIsAdmin) {
         return 'admin';
       }
-      return 'user';
+      return 'user'
     },
-  },
+ 
 };
-</script>
+
 
 <style lang="scss">
 @import './assets/scss/styles.scss';
