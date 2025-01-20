@@ -52,7 +52,7 @@ jobs:
           if grep -q "^sonar.projectVersion=" sonar-project.properties; then
             sed -i "s/^sonar.projectVersion=.*/sonar.projectVersion=$VERSION/" sonar-project.properties
           else
-            echo "\nsonar.projectVersion=$VERSION" >> sonar-project.properties
+            echo "sonar.projectVersion=$VERSION" >> sonar-project.properties
           fi
           cat sonar-project.properties
 
