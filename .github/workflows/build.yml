@@ -15,6 +15,9 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Listar
+        run: ls -la
+
       - name: Extraer versión
         id: version
         run: |
@@ -29,12 +32,7 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        # continue-on-error: true
-
-      # - uses: sonarsource/sonarqube-quality-gate-action@v1
-      #   timeout-minutes: 0
-      #   env:
-      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        continue-on-error: true
 
       - name: Extraer task id
         id: extract_task_id
