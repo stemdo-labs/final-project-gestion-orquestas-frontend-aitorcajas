@@ -24,7 +24,7 @@ jobs:
       - name: Extract sonar.projectKey
         id: project_key
         run: |
-          KEY=$(grep -oP '^sonar.projectKey=\K.*' sonar.properties)
+          KEY=$(grep -oP '^sonar.projectKey=\K.*' sonar-project.properties)
           echo "KEY=$KEY" >> $GITHUB_OUTPUT
 
       - uses: sonarsource/sonarqube-scan-action@v4
