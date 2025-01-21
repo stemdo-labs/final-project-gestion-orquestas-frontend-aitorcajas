@@ -58,32 +58,32 @@ jobs:
             exit 1
           fi
 
-          if jq -e '.issues[] | select(.category == "VULNERABILITY")' "$SONAR_REPORT" > /dev/null; then
+          if jq -e '.[] | select(.category == "VULNERABILITY")' "$SONAR_REPORT" > /dev/null; then
             echo "Vulnerabilidades encontradas. Pipeline abortada."
             exit 1
           fi
 
-          if jq -e '.issues[] | select(.category == "BUG")' "$SONAR_REPORT" > /dev/null; then
+          if jq -e '.[] | select(.category == "BUG")' "$SONAR_REPORT" > /dev/null; then
             echo "Bugs encontrados. Pipeline abortada."
             exit 1
           fi
 
-          if jq -e '.issues[] | select(.category == "CODE_SMELL")' "$SONAR_REPORT" > /dev/null; then
+          if jq -e '.[] | select(.category == "CODE_SMELL")' "$SONAR_REPORT" > /dev/null; then
             echo "Code smell encontrado. Pipeline abortada."
             exit 1
           fi
 
-          if jq -e '.issues[] | select(.rule == "duplicated_code")' "$SONAR_REPORT" > /dev/null; then
+          if jq -e '.[] | select(.rule == "duplicated_code")' "$SONAR_REPORT" > /dev/null; then
             echo "Código duplicado. Pipeline abortada."
             exit 1
           fi
 
-          if jq -e '.metrics[] | select(.key == "coverage" and .value | tonumber < 80)' "$SONAR_REPORT" > /dev/null; then
+          if jq -e '.[] | select(.key == "coverage" and .value | tonumber < 80)' "$SONAR_REPORT" > /dev/null; then
             echo "Baja cobertura de pruebas. Pipeline abortada."
             exit 1
           fi
 
-          if jq -e '.metrics[] | select(.category == "QUALITY_GATE" and .name == "Failed")' "$SONAR_REPORT" > /dev/null; then
+          if jq -e '.[] | select(.category == "QUALITY_GATE" and .name == "Failed")' "$SONAR_REPORT" > /dev/null; then
             echo "Quality Gate fallida. Pipeline abortada."
             exit 1
           fi
