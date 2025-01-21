@@ -15,14 +15,17 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Listar
-        run: ls -la
-
       - name: Extraer versión
         id: version
         run: |
           VERSION=$(jq -r '.version' package.json)
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Extract sonar.projectKey
+        id: project_key
+        run: |
+          KEY=$(grep -oP '^sonar.projectKey=\K.*' sonar.properties)
+          echo "KEY=$KEY" >> $GITHUB_OUTPUT
 
       - uses: sonarsource/sonarqube-scan-action@v4
         with:
@@ -34,17 +37,11 @@ jobs:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         continue-on-error: true
 
-      - name: Extraer task id
-        id: extract_task_id
-        run: |
-          cat .scannerwork/report-task.txt
-          TASK_ID=$(cat .scannerwork/report-task.txt | grep -oP 'ceTaskId=\K.*')
-          echo "TASK_ID=$TASK_ID" >> $GITHUB_OUTPUT
-
       - name: Generar reporte
         run: |
-          curl -u ${{ secrets.SONAR_TOKEN }}: "${{ secrets.SONAR_HOST_URL }}/api/ce/task?id=${{ steps.extract_task_id.outputs.TASK_ID }}" > report.json
-          cat report.json | jq . > sonar-report.json
+          curl -u ${{ secrets.SONAR_USER_TOKEN }}: "${{ secrets.SONAR_HOST_URL }}/api/project_analyses/search?project=${{ steps.project_key.outputs.KEY }}" > report.json
+          cat report.json | jq . > analyses.json
+          jq '.analyses[] | select(.projectVersion == "${{ steps.version.outputs.VERSION }}")' analyses.json > sonar-report.json
 
       - name: Upload SonarQube report artifact
         uses: actions/upload-artifact@v3
