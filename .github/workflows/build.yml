@@ -60,37 +60,37 @@ jobs:
           fi
 
           # Verificar si hay una vulnerabilidad
-          if jq -e '.[] | select(.events[]? | .category == "VULNERABILITY")' "$SONAR_REPORT" > /dev/null; then
+          if jq -e '.[] | select(.[]? | .category == "VULNERABILITY")' "$SONAR_REPORT" > /dev/null; then
             echo "Vulnerabilidades encontradas. Pipeline abortada."
             exit 1
           fi
 
           # Verificar si hay un bug
-          if jq -e '.[] | select(.events[]? | .category == "BUG")' "$SONAR_REPORT" > /dev/null; then
+          if jq -e '.[] | select(.[]? | .category == "BUG")' "$SONAR_REPORT" > /dev/null; then
             echo "Bugs encontrados. Pipeline abortada."
             exit 1
           fi
 
           # Verificar si hay un code smell
-          if jq -e '.[] | select(.events[]? | .category == "CODE_SMELL")' "$SONAR_REPORT" > /dev/null; then
+          if jq -e '.[] | select(.[]? | .category == "CODE_SMELL")' "$SONAR_REPORT" > /dev/null; then
             echo "Code smell encontrado. Pipeline abortada."
             exit 1
           fi
 
           # Verificar si hay código duplicado
-          if jq -e '.[] | select(.events[]? | .rule == "duplicated_code")' "$SONAR_REPORT" > /dev/null; then
+          if jq -e '.[] | select(.[]? | .rule == "duplicated_code")' "$SONAR_REPORT" > /dev/null; then
             echo "Código duplicado. Pipeline abortada."
             exit 1
           fi
 
           # Verificar si la cobertura de pruebas es menor a 80
-          if jq -e '.[] | select(.metrics[]? | .key == "coverage" and (.value | tonumber) < 80)' "$SONAR_REPORT" > /dev/null; then
+          if jq -e '.[] | select(.[]? | .key == "coverage" and (.value | tonumber) < 80)' "$SONAR_REPORT" > /dev/null; then
             echo "Baja cobertura de pruebas. Pipeline abortada."
             exit 1
           fi
 
           # Verificar si hay una Quality Gate fallida
-          if jq -e '.[] | select(.events[]? | .category == "QUALITY_GATE" and .name == "Failed")' "$SONAR_REPORT" > /dev/null; then
+          if jq -e '.[] | select(.[]? | .category == "QUALITY_GATE" and .name == "Failed")' "$SONAR_REPORT" > /dev/null; then
             echo "Quality Gate fallida. Pipeline abortada."
             exit 1
           fi
