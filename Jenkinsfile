@@ -25,11 +25,15 @@ spec:
     }
     stages {
         stage('Instalar dependencias') {
-            sh '''
-                sudo apt-get update
-                sudo apt-get install -y jq
-                sudo apt-get install -y openjdk-11-jdk
-            '''
+            steps {
+                script {
+                    sh '''
+                        sudo apt-get update
+                        sudo apt-get install -y jq
+                        sudo apt-get install -y openjdk-11-jdk
+                    '''
+                }
+            }
         }
 
         stage('SCM') {
