@@ -24,6 +24,14 @@ spec:
         SONAR_HOST_URL = credentials('SONAR_HOST_URL')
     }
     stages {
+        stage('Instalar dependencias') {
+            sh '''
+                sudo apt-get update
+                sudo apt-get install -y jq
+                sudo apt-get install -y openjdk-11-jdk
+            '''
+        }
+
         stage('SCM') {
             steps {
                 checkout scm
