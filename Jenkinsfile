@@ -1,4 +1,9 @@
 node {
+    environment {
+        SONAR_TOKEN = credentials('SONAR_USER_TOKEN')  // Define the SONAR_TOKEN from Jenkins credentials
+        SONAR_HOST_URL = credentials('SONAR_HOST_URL') // Replace with your actual SonarQube URL
+    }
+
     stage('SCM') {
         checkout scm
     }
@@ -16,7 +21,7 @@ node {
             sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectVersion=${env.VERSION} -Dsonar.qualitygate.wait=true"
         }
     }
-    
+
     stage('Generar Reporte') {
         script {
             sh """
