@@ -2,8 +2,6 @@ name: Build
 
 on:
   workflow_dispatch:
-  pull_request:
-    types: [opened, synchronize, reopened]
 
 jobs:
   build:
@@ -27,73 +25,9 @@ jobs:
           KEY=$(grep -oP '^sonar.projectKey=\K.*' sonar-project.properties)
           echo "KEY=$KEY" >> $GITHUB_OUTPUT
 
-      - uses: sonarsource/sonarqube-scan-action@v4
-        id: sonarqube
+      - name: SonarQube Analysis
+        uses: stemdo-labs/S-SDLC_SonarQube/.github/workflows/sonarqube-analysis.yml@acajas-branch
         with:
-          args: >
-            -Dsonar.projectVersion=${{ steps.version.outputs.VERSION }}
-            -Dsonar.qualitygate.wait=true
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_USER_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        continue-on-error: true
-
-      - name: Generar reporte
-        run: |
-          curl -u ${{ secrets.SONAR_USER_TOKEN }}: "${{ secrets.SONAR_HOST_URL }}/api/project_analyses/search?project=${{ steps.project_key.outputs.KEY }}" > report.json
-          cat report.json | jq . > analyses.json
-          jq '.analyses[] | select(.projectVersion == "${{ steps.version.outputs.VERSION }}")' analyses.json > sonar-report.json
-
-      - name: Upload SonarQube report artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: sonar-report
-          path: sonar-report.json
-
-      - name: Evaluate SonarQube Result
-        run: |
-          if [ "${{ steps.sonarqube.outcome }}" != "success" ]; then
-            echo "SonarQube step failed with outcome: ${{ steps.sonarqube.outcome }}"
-            exit 1
-          fi
-#hola
-      # - name: Análisis del reporte
-      #   run: |
-      #     SONAR_REPORT=sonar-report.json
-
-      #     if [ ! -f "$SONAR_REPORT" ]; then
-      #       echo "No se encontró el reporte de SonarQube en la ruta especificada. Pipeline abortada."
-      #       exit 1
-      #     fi
-
-      #     if jq -e '.[] | select(.[]? | .category == "VULNERABILITY")' "$SONAR_REPORT" > /dev/null; then
-      #       echo "Vulnerabilidades encontradas. Pipeline abortada."
-      #       exit 1
-      #     fi
-
-      #     if jq -e '.[] | select(.[]? | .category == "BUG")' "$SONAR_REPORT" > /dev/null; then
-      #       echo "Bugs encontrados. Pipeline abortada."
-      #       exit 1
-      #     fi
-
-      #     if jq -e '.[] | select(.[]? | .category == "CODE_SMELL")' "$SONAR_REPORT" > /dev/null; then
-      #       echo "Code smell encontrado. Pipeline abortada."
-      #       exit 1
-      #     fi
-
-      #     if jq -e '.[] | select(.[]? | .rule == "duplicated_code")' "$SONAR_REPORT" > /dev/null; then
-      #       echo "Código duplicado. Pipeline abortada."
-      #       exit 1
-      #     fi
-
-      #     if jq -e '.[] | select(.[]? | .key == "coverage" and (.value | tonumber) < 80)' "$SONAR_REPORT" > /dev/null; then
-      #       echo "Baja cobertura de pruebas. Pipeline abortada."
-      #       exit 1
-      #     fi
-
-      #     if jq -e '.[] | select(.[]? | .category == "QUALITY_GATE" and .name == "Failed")' "$SONAR_REPORT" > /dev/null; then
-      #       echo "Quality Gate fallida. Pipeline abortada."
-      #       exit 1
-      #     fi
-
-      #     echo "El reporte de SonarQube está limpio. Continuando con el despliegue."
+          version: ${{ steps.version.outputs.VERSION }}
+          project_key: ${{ steps.project_key.outputs.KEY }}
+        secrets: inherit
