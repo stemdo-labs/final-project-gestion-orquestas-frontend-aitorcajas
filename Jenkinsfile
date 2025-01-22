@@ -54,7 +54,7 @@ spec:
                                 -Dsonar.qualitygate.wait=true
                             """
                         }
-                    } catch {
+                    } catch (Exception e) {
                         def sonarOutcome = 'failure'
                         env.OUTCOME = sonarOutcome
                     }
