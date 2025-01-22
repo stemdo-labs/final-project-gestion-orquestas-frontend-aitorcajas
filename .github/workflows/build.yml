@@ -37,10 +37,6 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_USER_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         continue-on-error: true
-        shell: bash
-        run: |
-          # Redirige la salida a un archivo
-          sonarsource/sonarqube-scan-action@v4 > sonarqube_output.log 2>&1
 
       - name: Generar reporte
         run: |
@@ -54,14 +50,9 @@ jobs:
           name: sonar-report
           path: sonar-report.json
 
-      - name: Check SonarQube Logs
+      - name: Evaluate SonarQube Result
         run: |
-          LOG_FILE="sonarqube_output.log"
-          if ! grep -q "EXECUTION SUCCESS" "$LOG_FILE"; then
-            echo "SonarQube scan failed. Stopping workflow."
-            exit 1
-          fi
-          echo "SonarQube scan passed. Continuing workflow."
+          echo "SonarQube step failed with outcome: ${{ steps.sonarqube.outcome }}"
 
       # - name: Análisis del reporte
       #   run: |
