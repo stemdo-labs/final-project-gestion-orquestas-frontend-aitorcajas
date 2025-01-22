@@ -7,6 +7,9 @@ jobs:
   build:
     name: Build and analyze
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.VERSION }}
+      project_key: ${{ steps.project_key.outputs.KEY }}
     
     steps:
       - uses: actions/checkout@v4
@@ -25,9 +28,10 @@ jobs:
           KEY=$(grep -oP '^sonar.projectKey=\K.*' sonar-project.properties)
           echo "KEY=$KEY" >> $GITHUB_OUTPUT
 
-      - name: SonarQube Analysis
-        uses: stemdo-labs/S-SDLC_SonarQube/.github/workflows/sonarqube-analysis.yml@acajas-branch
-        with:
-          version: ${{ steps.version.outputs.VERSION }}
-          project_key: ${{ steps.project_key.outputs.KEY }}
-        secrets: inherit
+  sonar:
+    needs: build
+    uses: stemdo-labs/S-SDLC_SonarQube/.github/workflows/sonarqube-analysis.yml@acajas-branch
+    with:
+      version: ${{ needs.build.outputs.version }}
+      project_key: ${{ needs.build.outputs.project_key }}
+    secrets: inherit
