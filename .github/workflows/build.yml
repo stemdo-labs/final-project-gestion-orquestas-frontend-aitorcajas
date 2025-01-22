@@ -2,30 +2,36 @@ name: Build
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
-  pull_request:
-    types: [opened, synchronize, reopened]
 
 jobs:
   build:
     name: Build and analyze
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.VERSION }}
+      project_key: ${{ steps.project_key.outputs.KEY }}
     
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-      - uses: sonarsource/sonarqube-scan-action@v4
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-      # If you wish to fail your job when the Quality Gate is red, uncomment the
-      # following lines. This would typically be used to fail a deployment.
-      # We do not recommend to use this in a pull request. Prefer using pull request
-      # decoration instead.
-      # - uses: sonarsource/sonarqube-quality-gate-action@v1
-      #   timeout-minutes: 5
-      #   env:
-      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          fetch-depth: 0
+
+      - name: Extraer versión
+        id: version
+        run: |
+          VERSION=$(jq -r '.version' package.json)
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Extraer projectKey
+        id: project_key
+        run: |
+          KEY=$(grep -oP '^sonar.projectKey=\K.*' sonar-project.properties)
+          echo "KEY=$KEY" >> $GITHUB_OUTPUT
+
+  sonar:
+    needs: build
+    uses: stemdo-labs/S-SDLC_SonarQube/.github/workflows/sonarqube-analysis.yml@acajas-branch
+    with:
+      version: ${{ needs.build.outputs.version }}
+      project_key: ${{ needs.build.outputs.project_key }}
+    secrets: inherit

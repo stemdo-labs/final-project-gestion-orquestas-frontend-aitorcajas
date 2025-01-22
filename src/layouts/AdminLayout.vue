@@ -16,6 +16,7 @@
         </div>
     </div>
 </template>
+
 <script>
 import AdminMenu from "@/components/Menus/AdminMenu.vue";
 import AccountMenu from "../components/Menus/AccountMenu.vue";

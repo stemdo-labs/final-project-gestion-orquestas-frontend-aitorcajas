@@ -28,7 +28,7 @@
                 <article>
                     <div>
                         <h1>Alejandro Bermudez madridista</h1>
-                        <h2>lo dice Simeone</h2>
+                        <h2>su jugador favorito es Vinicius</h2>
                     </div>
                     <div>
                         <h3>Últimas noticias</h3>
