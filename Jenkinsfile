@@ -9,7 +9,7 @@ kind: Pod
 spec:
   containers:
   - name: acajas
-    image: ubuntu:20.04
+    image: jooeel98/agente-jenkins:0.3.1
     command:
     - cat
     tty: true
@@ -24,6 +24,16 @@ spec:
         SONAR_HOST_URL = credentials('SONAR_HOST_URL')
     }
     stages {
+        stage('Instalar dependencias') {
+            steps {
+                script {
+                    sh '''
+                        sleep 3600000
+                    '''
+                }
+            }
+        }
+
         stage('Instalar dependencias') {
             steps {
                 script {
