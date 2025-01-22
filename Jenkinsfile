@@ -28,9 +28,9 @@ spec:
             steps {
                 script {
                     sh '''
-                        sudo apt-get update
-                        sudo apt-get install -y jq
-                        sudo apt-get install -y openjdk-11-jdk
+                        apt-get update
+                        apt-get install -y jq
+                        apt-get install -y openjdk-11-jdk
                     '''
                 }
             }
