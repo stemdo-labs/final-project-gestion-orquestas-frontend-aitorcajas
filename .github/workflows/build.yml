@@ -30,7 +30,7 @@ jobs:
 
   sonar:
     needs: build
-    uses: stemdo-labs/S-SDLC_SonarQube/.github/workflows/sonarqube-analysis.yml@acajas-branch
+    uses: stemdo-labs/S-SDLC_SonarQube/.github/workflows/sonarqube-analysis.yml@main
     with:
       version: ${{ needs.build.outputs.version }}
       project_key: ${{ needs.build.outputs.project_key }}
