@@ -18,7 +18,7 @@ spec:
 """
         }
     }
-    
+
     environment {
         SONAR_TOKEN = credentials('SONAR_USER_TOKEN')
         SONAR_HOST_URL = credentials('SONAR_HOST_URL')
@@ -61,8 +61,6 @@ spec:
                 script {
                     sh """
                         curl -u ${SONAR_TOKEN}: "${SONAR_HOST_URL}/api/project_analyses/search?project=frontend-acajas-jenkins" > report.json
-                        cat report.json | jq . > analyses.json
-                        jq '.analyses[] | select(.projectVersion == "${env.VERSION}")' analyses.json > sonar-report.json
                     """
                 }
             }
@@ -71,7 +69,7 @@ spec:
         stage('Upload SonarQube Report Artifact') {
             steps {
                 script {
-                    archiveArtifacts allowEmptyArchive: true, artifacts: 'sonar-report.json', onlyIfSuccessful: true
+                    archiveArtifacts allowEmptyArchive: true, artifacts: 'report.json', onlyIfSuccessful: true
                 }
             }
         }
@@ -79,7 +77,7 @@ spec:
         stage('Evaluate SonarQube Result') {
             steps {
                 script {
-                    def result = sh(script: "cat sonar-report.json", returnStdout: true).trim()
+                    def result = sh(script: "cat report.json", returnStdout: true).trim()
                     if (result.contains("success")) {
                         echo "SonarQube step succeeded"
                     } else {
