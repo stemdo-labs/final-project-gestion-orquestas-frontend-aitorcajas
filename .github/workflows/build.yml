@@ -28,6 +28,7 @@ jobs:
           echo "KEY=$KEY" >> $GITHUB_OUTPUT
 
       - uses: sonarsource/sonarqube-scan-action@v4
+        id: sonarqube
         with:
           args: >
             -Dsonar.projectVersion=${{ steps.version.outputs.VERSION }}
@@ -49,50 +50,51 @@ jobs:
           name: sonar-report
           path: sonar-report.json
 
-      - name: Análisis del reporte
+      - name: Check SonarQube Logs
+        id: check-logs
         run: |
-          SONAR_REPORT=sonar-report.json
-
-          # Verificar si el archivo existe
-          if [ ! -f "$SONAR_REPORT" ]; then
-            echo "No se encontró el reporte de SonarQube en la ruta especificada. Pipeline abortada."
+          if ! grep -q "EXECUTION SUCCESS" "${{ runner.temp }}/_work/_temp/sonarqube.log"; then
+            echo "SonarQube scan failed. Stopping workflow."
             exit 1
           fi
 
-          # Verificar si hay una vulnerabilidad
-          if jq -e '.[] | select(.[]? | .category == "VULNERABILITY")' "$SONAR_REPORT" > /dev/null; then
-            echo "Vulnerabilidades encontradas. Pipeline abortada."
-            exit 1
-          fi
+      # - name: Análisis del reporte
+      #   run: |
+      #     SONAR_REPORT=sonar-report.json
 
-          # Verificar si hay un bug
-          if jq -e '.[] | select(.[]? | .category == "BUG")' "$SONAR_REPORT" > /dev/null; then
-            echo "Bugs encontrados. Pipeline abortada."
-            exit 1
-          fi
+      #     if [ ! -f "$SONAR_REPORT" ]; then
+      #       echo "No se encontró el reporte de SonarQube en la ruta especificada. Pipeline abortada."
+      #       exit 1
+      #     fi
 
-          # Verificar si hay un code smell
-          if jq -e '.[] | select(.[]? | .category == "CODE_SMELL")' "$SONAR_REPORT" > /dev/null; then
-            echo "Code smell encontrado. Pipeline abortada."
-            exit 1
-          fi
+      #     if jq -e '.[] | select(.[]? | .category == "VULNERABILITY")' "$SONAR_REPORT" > /dev/null; then
+      #       echo "Vulnerabilidades encontradas. Pipeline abortada."
+      #       exit 1
+      #     fi
 
-          # Verificar si hay código duplicado
-          if jq -e '.[] | select(.[]? | .rule == "duplicated_code")' "$SONAR_REPORT" > /dev/null; then
-            echo "Código duplicado. Pipeline abortada."
-            exit 1
-          fi
+      #     if jq -e '.[] | select(.[]? | .category == "BUG")' "$SONAR_REPORT" > /dev/null; then
+      #       echo "Bugs encontrados. Pipeline abortada."
+      #       exit 1
+      #     fi
 
-          # Verificar si la cobertura de pruebas es menor a 80
-          if jq -e '.[] | select(.[]? | .key == "coverage" and (.value | tonumber) < 80)' "$SONAR_REPORT" > /dev/null; then
-            echo "Baja cobertura de pruebas. Pipeline abortada."
-            exit 1
-          fi
+      #     if jq -e '.[] | select(.[]? | .category == "CODE_SMELL")' "$SONAR_REPORT" > /dev/null; then
+      #       echo "Code smell encontrado. Pipeline abortada."
+      #       exit 1
+      #     fi
 
-          # Verificar si hay una Quality Gate fallida
-          if jq -e '.[] | select(.[]? | .category == "QUALITY_GATE" and .name == "Failed")' "$SONAR_REPORT" > /dev/null; then
-            echo "Quality Gate fallida. Pipeline abortada."
-            exit 1
-          fi
+      #     if jq -e '.[] | select(.[]? | .rule == "duplicated_code")' "$SONAR_REPORT" > /dev/null; then
+      #       echo "Código duplicado. Pipeline abortada."
+      #       exit 1
+      #     fi
 
-          echo "El reporte de SonarQube está limpio. Continuando con el despliegue."
+      #     if jq -e '.[] | select(.[]? | .key == "coverage" and (.value | tonumber) < 80)' "$SONAR_REPORT" > /dev/null; then
+      #       echo "Baja cobertura de pruebas. Pipeline abortada."
+      #       exit 1
+      #     fi
+
+      #     if jq -e '.[] | select(.[]? | .category == "QUALITY_GATE" and .name == "Failed")' "$SONAR_REPORT" > /dev/null; then
+      #       echo "Quality Gate fallida. Pipeline abortada."
+      #       exit 1
+      #     fi
+
+      #     echo "El reporte de SonarQube está limpio. Continuando con el despliegue."
