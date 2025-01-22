@@ -9,7 +9,7 @@ kind: Pod
 spec:
   containers:
   - name: acajas
-    image: jooeel98/agente-jenkins:0.3.1
+    image: ubuntu:20.04
     command:
     - cat
     tty: true
@@ -67,6 +67,8 @@ spec:
                 script {
                     sh """
                         curl -u ${SONAR_TOKEN}: "${SONAR_HOST_URL}/api/project_analyses/search?project=frontend-acajas-jenkins" > report.json
+                        cat report.json | jq . > analyses.json
+                        jq '.analyses[] | select(.projectVersion == "${projectVersion}")' analyses.json > sonar-report.json
                     """
                 }
             }
@@ -75,7 +77,7 @@ spec:
         stage('Upload SonarQube Report Artifact') {
             steps {
                 script {
-                    archiveArtifacts allowEmptyArchive: true, artifacts: 'report.json', onlyIfSuccessful: true
+                    archiveArtifacts allowEmptyArchive: true, artifacts: 'sonar-report.json', onlyIfSuccessful: true
                 }
             }
         }
