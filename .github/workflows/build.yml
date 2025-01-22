@@ -22,7 +22,7 @@ jobs:
           VERSION=$(jq -r '.version' package.json)
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
 
-      - name: Extract sonar.projectKey
+      - name: Extraer projectKey
         id: project_key
         run: |
           KEY=$(grep -oP '^sonar.projectKey=\K.*' sonar-project.properties)
