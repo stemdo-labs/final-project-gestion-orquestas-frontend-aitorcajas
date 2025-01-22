@@ -24,23 +24,12 @@ spec:
         SONAR_HOST_URL = credentials('SONAR_HOST_URL')
     }
     stages {
-        stage('Dormir') {
-            steps {
-                script {
-                    sh '''
-                        sleep 3600000
-                    '''
-                }
-            }
-        }
-
         stage('Instalar dependencias') {
             steps {
                 script {
                     sh '''
-                        apt-get update
-                        apt-get install -y jq
-                        apt-get install -y openjdk-11-jdk
+                        apk update
+                        apk add --no-cache jq
                     '''
                 }
             }
