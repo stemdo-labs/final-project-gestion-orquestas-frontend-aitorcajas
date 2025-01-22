@@ -51,12 +51,14 @@ jobs:
           path: sonar-report.json
 
       - name: Check SonarQube Logs
-        id: check-logs
         run: |
-          if ! grep -q "EXECUTION SUCCESS" "${{ runner.temp }}/_work/_temp/sonarqube.log"; then
+          # Verifica si los logs contienen "EXECUTION SUCCESS"
+          if ! grep -q "EXECUTION SUCCESS" sonar-output.log; then
             echo "SonarQube scan failed. Stopping workflow."
+            cat sonar-output.log  # Opcional: mostrar logs en caso de error
             exit 1
           fi
+          echo "SonarQube scan passed. Continuing workflow."
 
       # - name: Análisis del reporte
       #   run: |
