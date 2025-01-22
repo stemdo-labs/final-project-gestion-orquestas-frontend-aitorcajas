@@ -52,13 +52,13 @@ jobs:
 
       - name: Check SonarQube Logs
         run: |
-          # Verifica si los logs contienen "EXECUTION SUCCESS"
-          if ! grep -q "EXECUTION SUCCESS" sonar-output.log; then
+          # Redirigir la salida del análisis de SonarQube a un archivo temporal
+          LOG_FILE="sonarqube_output.log"
+          grep "EXECUTION SUCCESS" $GITHUB_WORKSPACE/$LOG_FILE || {
             echo "SonarQube scan failed. Stopping workflow."
-            cat sonar-output.log  # Opcional: mostrar logs en caso de error
             exit 1
-          fi
-          echo "SonarQube scan passed. Continuing workflow."
+          }
+        shell: bash
 
       # - name: Análisis del reporte
       #   run: |
