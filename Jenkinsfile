@@ -87,10 +87,4 @@ spec:
             }
         }
     }
-
-    post {
-        always {
-            cleanWs()
-        }
-    }
 }
