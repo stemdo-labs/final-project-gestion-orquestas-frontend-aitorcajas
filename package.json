@@ -1,7 +1,7 @@
 {
   "name": "gestion-orquestas-front",
   "appTitle": "Gestión de Recursos Musicales",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
