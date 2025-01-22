@@ -83,7 +83,7 @@ spec:
         stage('Evaluate SonarQube Result') {
             steps {
                 script {
-                    if (${env.OUTCOME} == 'failure') {
+                    if ("${env.OUTCOME}" == 'failure') {
                         error("Stopping pipeline due to SonarQube analysis failure.")
                     } 
                 }
