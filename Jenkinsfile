@@ -52,6 +52,16 @@ spec:
             }
         }
 
+        stage('Extract projectKey') {
+            steps {
+                script {
+                    def key = sh(script: "grep -oP '^sonar.projectKey=\\K.*' sonar-project.properties", returnStdout: true).trim()
+                    env.PROJECT_KEY = key
+                    echo "Project Key: ${env.PROJECT_KEY}"
+                }
+            }
+        }
+
         stage('SonarQube Analysis') {
             steps {
                 script {
@@ -62,7 +72,8 @@ spec:
                             sh """
                             ${scannerHome}/bin/sonar-scanner \
                                 -Dsonar.projectVersion=${env.VERSION} \
-                                -Dsonar.qualitygate.wait=true
+                                -Dsonar.qualitygate.wait=true \
+                                -Dsonar.projectKey=${env.PROJECT_KEY}
                             """
                         }
                     } catch (Exception e) {
@@ -77,7 +88,7 @@ spec:
             steps {
                 script {
                     sh """
-                        curl -u ${SONAR_TOKEN}: "${SONAR_HOST_URL}/api/project_analyses/search?project=frontend-acajas-jenkins" > report.json
+                        curl -u ${SONAR_TOKEN}: "${SONAR_HOST_URL}/api/project_analyses/search?project=${env.PROJECT_KEY}" > report.json
                         cat report.json | jq . > analyses.json
                         jq '.analyses[] | select(.projectVersion == "${env.VERSION}")' analyses.json > sonar-report.json
                     """
