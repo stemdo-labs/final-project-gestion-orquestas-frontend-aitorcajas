@@ -52,7 +52,10 @@ jobs:
 
       - name: Evaluate SonarQube Result
         run: |
-          echo "SonarQube step failed with outcome: ${{ steps.sonarqube.outcome }}"
+          if [ "${{ steps.sonarqube.outcome }}" != "success" ]; then
+            echo "SonarQube step failed with outcome: ${{ steps.sonarqube.outcome }}"
+            exit 1
+          fi
 
       # - name: Análisis del reporte
       #   run: |
