@@ -24,7 +24,7 @@ spec:
         SONAR_HOST_URL = credentials('SONAR_HOST_URL')
     }
     stages {
-        stage('Instalar dependencias') {
+        stage('Dormir') {
             steps {
                 script {
                     sh '''
