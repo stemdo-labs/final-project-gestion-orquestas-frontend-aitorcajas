@@ -45,12 +45,18 @@ spec:
             steps {
                 script {
                     def scannerHome = tool 'sonar-scanner'
-                    withSonarQubeEnv() {
-                        sh """
-                          ${scannerHome}/bin/sonar-scanner \
-                            -Dsonar.projectVersion=${env.VERSION} \
-                            -Dsonar.qualitygate.wait=true
-                        """
+
+                    try {
+                        withSonarQubeEnv() {
+                            sh """
+                            ${scannerHome}/bin/sonar-scanner \
+                                -Dsonar.projectVersion=${env.VERSION} \
+                                -Dsonar.qualitygate.wait=true
+                            """
+                        }
+                    } catch {
+                        def sonarOutcome = 'failure'
+                        env.OUTCOME = sonarOutcome
                     }
                 }
             }
@@ -77,12 +83,9 @@ spec:
         stage('Evaluate SonarQube Result') {
             steps {
                 script {
-                    def result = sh(script: "cat report.json", returnStdout: true).trim()
-                    if (result.contains("success")) {
-                        echo "SonarQube step succeeded"
-                    } else {
-                        error "SonarQube step failed with outcome: ${result}"
-                    }
+                    if (${env.OUTCOME} == 'failure') {
+                        error("Stopping pipeline due to SonarQube analysis failure.")
+                    } 
                 }
             }
         }
