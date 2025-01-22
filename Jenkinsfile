@@ -30,6 +30,7 @@ spec:
                     sh '''
                         apk update
                         apk add --no-cache jq
+                        apk add --no-cache grep
                     '''
                 }
             }
