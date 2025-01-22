@@ -54,9 +54,11 @@ jobs:
         run: |
           # Redirigir la salida del análisis de SonarQube a un archivo temporal
           LOG_FILE="sonarqube_output.log"
-          grep "EXECUTION SUCCESS" $GITHUB_WORKSPACE/$LOG_FILE || {
-            echo "SonarQube scan failed. Stopping workflow."
-            exit 1
+          grep "EXECUTION SUCCESS" $GITHUB_WORKSPACE/$LOG_FILE && {
+            echo "SonarQube scan passed. Continuing workflow.";
+          } || {
+            echo "SonarQube scan failed. Stopping workflow.";
+            exit 1;
           }
         shell: bash
 
