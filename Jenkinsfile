@@ -79,7 +79,7 @@ spec:
                     sh """
                         curl -u ${SONAR_TOKEN}: "${SONAR_HOST_URL}/api/project_analyses/search?project=frontend-acajas-jenkins" > report.json
                         cat report.json | jq . > analyses.json
-                        jq '.analyses[] | select(.projectVersion == "${projectVersion}")' analyses.json > sonar-report.json
+                        jq '.analyses[] | select(.projectVersion == "${env.VERSION}")' analyses.json > sonar-report.json
                     """
                 }
             }
