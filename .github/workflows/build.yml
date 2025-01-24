@@ -35,7 +35,7 @@ jobs:
 
   sonar:
     needs: [entorno, build]
-    uses: stemdo-labs/S-SDLC_SonarQube/.github/workflows/sonarqube-analysis.yml@acajas-branch
+    uses: stemdo-labs/S-SDLC_SonarQube/.github/workflows/sonarqube-analysis.yml@main
     with:
       version: ${{ needs.build.outputs.version }}
       project_key: ${{ needs.build.outputs.project_key }}
@@ -44,7 +44,7 @@ jobs:
 
   ci:
     needs: [entorno, build, sonar]
-    uses: stemdo-labs/final-project-exercise-aitorcajas/.github/workflows/ci.yml@develop
+    uses: stemdo-labs/final-project-exercise-aitorcajas/.github/workflows/ci.yml@main
     with:
       entorno: ${{ needs.entorno.outputs.entorno }}
       desarrollo: ${{ needs.entorno.outputs.desarrollo }}
@@ -53,7 +53,7 @@ jobs:
 
   cd:
     needs: [ci, entorno]
-    uses: stemdo-labs/final-project-exercise-aitorcajas/.github/workflows/cd.yml@develop
+    uses: stemdo-labs/final-project-exercise-aitorcajas/.github/workflows/cd.yml@main
     with:
       desarrollo: ${{ needs.entorno.outputs.desarrollo }}
       entorno: ${{ needs.entorno.outputs.entorno }}
