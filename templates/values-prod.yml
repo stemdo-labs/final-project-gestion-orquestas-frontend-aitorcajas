@@ -1,5 +1,5 @@
 #Nombre del namespace donde se desplegará
-namespace: ns-acajas
+namespace: acajas
 
 #Número de replicas
 replicas: 1
