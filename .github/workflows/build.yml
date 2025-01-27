@@ -2,6 +2,13 @@ name: CI-CD frontend && SonarQube
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - develop
+    types: [opened, synchronize, reopened]
 
 jobs:
   entorno:
