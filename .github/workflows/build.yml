@@ -31,7 +31,7 @@ jobs:
       - name: Extraer versión
         id: version
         run: |
-          VERSION=$(grep -oP '<version>\K[^\<]+' pom.xml | sed -n '2p')
+          VERSION=$(jq -r '.version' package.json)
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Extraer projectKey
