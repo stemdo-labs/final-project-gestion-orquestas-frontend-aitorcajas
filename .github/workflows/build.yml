@@ -47,6 +47,7 @@ jobs:
       version: ${{ needs.build.outputs.version }}
       project_key: ${{ needs.build.outputs.project_key }}
       entorno: ${{ needs.entorno.outputs.entorno }}
+      rama: ${{ needs.entorno.outputs.rama }}
     secrets: inherit
 
   ci:
