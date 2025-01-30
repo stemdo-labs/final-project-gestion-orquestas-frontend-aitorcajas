@@ -15,15 +15,12 @@ on:
  
 jobs:
   entorno:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Usar workflow de entorno-release
-        if: startsWith(github.ref, 'refs/tags/')
-        uses: stemdo-labs/final-project-exercise-aitorcajas/.github/workflows/environment-release.yml@main
+    if: startsWith(github.ref, 'refs/tags/')
+    # uses: stemdo-labs/final-project-exercise-aitorcajas/.github/workflows/environment-release.yml@main
  
-      - name: Usar workflow de entorno-rama
-        if: startsWith(github.ref, 'refs/heads/')
-        uses: stemdo-labs/final-project-exercise-aitorcajas/.github/workflows/environment-branch.yml@main
+    #   - name: Usar workflow de entorno-rama
+    #     if: startsWith(github.ref, 'refs/heads/')
+    #     uses: stemdo-labs/final-project-exercise-aitorcajas/.github/workflows/environment-branch.yml@main
  
   build:
     needs: entorno
@@ -51,29 +48,29 @@ jobs:
           KEY=$(grep -oP '^sonar.projectKey=\K.*' sonar-project.properties)
           echo "KEY=$KEY" >> $GITHUB_OUTPUT
  
-  sonar:
-    needs: [entorno, build]
-    runs-on: ubuntu-latest
-    steps:
-    - name: Sonar release
-      if: startsWith(github.ref, 'refs/tags/')
-      uses: stemdo-labs/S-SDLC_SonarQube/.github/workflows/sonarqube-analysis-release.yml@main
-      with:
-        version: ${{ needs.build.outputs.version }}
-        project_key: ${{ needs.build.outputs.project_key }}
-        entorno: ${{ needs.entorno.outputs.entorno }}
-        rama: main
-      secrets: inherit
+  # sonar:
+  #   needs: [entorno, build]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - name: Sonar release
+  #     if: startsWith(github.ref, 'refs/tags/')
+  #     uses: stemdo-labs/S-SDLC_SonarQube/.github/workflows/sonarqube-analysis-release.yml@main
+  #     with:
+  #       version: ${{ needs.build.outputs.version }}
+  #       project_key: ${{ needs.build.outputs.project_key }}
+  #       entorno: ${{ needs.entorno.outputs.entorno }}
+  #       rama: main
+  #     secrets: inherit
  
-    - name: Sonar branch/pr
-      if: startsWith(github.ref, 'refs/heads/')
-      uses: stemdo-labs/S-SDLC_SonarQube/.github/workflows/sonarqube-analysis.yml@main
-      with:
-        version: ${{ needs.build.outputs.version }}
-        project_key: ${{ needs.build.outputs.project_key }}
-        entorno: ${{ needs.entorno.outputs.entorno }}
-        rama: ${{ needs.entorno.outputs.rama }}
-      secrets: inherit
+  #   - name: Sonar branch/pr
+  #     if: startsWith(github.ref, 'refs/heads/')
+  #     uses: stemdo-labs/S-SDLC_SonarQube/.github/workflows/sonarqube-analysis.yml@main
+  #     with:
+  #       version: ${{ needs.build.outputs.version }}
+  #       project_key: ${{ needs.build.outputs.project_key }}
+  #       entorno: ${{ needs.entorno.outputs.entorno }}
+  #       rama: ${{ needs.entorno.outputs.rama }}
+  #     secrets: inherit
  
   ci:
     needs: [entorno, build, sonar]
