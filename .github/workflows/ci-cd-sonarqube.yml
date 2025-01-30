@@ -1,5 +1,5 @@
 name: CI-CD frontend && SonarQube
-
+ 
 on:
   workflow_dispatch:
   push:
@@ -9,11 +9,22 @@ on:
     branches:
       - develop
     types: [opened, synchronize, reopened]
-
+  release:
+    types:
+      - created
+ 
 jobs:
   entorno:
-    uses: stemdo-labs/final-project-exercise-aitorcajas/.github/workflows/environment.yml@main
-
+    runs-on: ubuntu-latest
+    steps:
+      - name: Usar workflow de entorno-release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: stemdo-labs/final-project-exercise-aitorcajas/.github/workflows/environment-release.yml@main
+ 
+      - name: Usar workflow de entorno-rama
+        if: startsWith(github.ref, 'refs/heads/')
+        uses: stemdo-labs/final-project-exercise-aitorcajas/.github/workflows/environment-branch.yml@main
+ 
   build:
     needs: entorno
     name: Build and analyze
@@ -22,34 +33,48 @@ jobs:
     outputs:
       version: ${{ steps.version.outputs.VERSION }}
       project_key: ${{ steps.project_key.outputs.KEY }}
-    
+   
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
+ 
       - name: Extraer versión
         id: version
         run: |
           VERSION=$(jq -r '.version' package.json)
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
-
+ 
       - name: Extraer projectKey
         id: project_key
         run: |
           KEY=$(grep -oP '^sonar.projectKey=\K.*' sonar-project.properties)
           echo "KEY=$KEY" >> $GITHUB_OUTPUT
-
+ 
   sonar:
     needs: [entorno, build]
-    uses: stemdo-labs/S-SDLC_SonarQube/.github/workflows/sonarqube-analysis.yml@acajas-branch
-    with:
-      version: ${{ needs.build.outputs.version }}
-      project_key: ${{ needs.build.outputs.project_key }}
-      entorno: ${{ needs.entorno.outputs.entorno }}
-      rama: ${{ needs.entorno.outputs.rama }}
-    secrets: inherit
-
+    runs-on: ubuntu-latest
+    steps:
+    - name: Sonar release
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: stemdo-labs/S-SDLC_SonarQube/.github/workflows/sonarqube-analysis-release.yml@main
+      with:
+        version: ${{ needs.build.outputs.version }}
+        project_key: ${{ needs.build.outputs.project_key }}
+        entorno: ${{ needs.entorno.outputs.entorno }}
+        rama: main
+      secrets: inherit
+ 
+    - name: Sonar branch/pr
+      if: startsWith(github.ref, 'refs/heads/')
+      uses: stemdo-labs/S-SDLC_SonarQube/.github/workflows/sonarqube-analysis.yml@main
+      with:
+        version: ${{ needs.build.outputs.version }}
+        project_key: ${{ needs.build.outputs.project_key }}
+        entorno: ${{ needs.entorno.outputs.entorno }}
+        rama: ${{ needs.entorno.outputs.rama }}
+      secrets: inherit
+ 
   ci:
     needs: [entorno, build, sonar]
     uses: stemdo-labs/final-project-exercise-aitorcajas/.github/workflows/ci.yml@develop
@@ -58,7 +83,7 @@ jobs:
       desarrollo: ${{ needs.entorno.outputs.desarrollo }}
       version: ${{ needs.build.outputs.version }}
     secrets: inherit
-
+ 
   cd:
     needs: [ci, entorno]
     uses: stemdo-labs/final-project-exercise-aitorcajas/.github/workflows/cd.yml@develop
