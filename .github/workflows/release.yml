@@ -1,0 +1,63 @@
+name: CI-CD frontend && SonarQube
+ 
+on:
+  release:
+    types:
+      - created
+ 
+jobs:
+  entorno-release:
+    uses: stemdo-labs/final-project-exercise-aitorcajas/.github/workflows/environment-release.yml@main
+ 
+  build:
+    needs: entorno
+    name: Build and analyze
+    runs-on: ubuntu-latest
+    environment: ${{ needs.entorno.outputs.entorno }}
+    outputs:
+      version: ${{ steps.version.outputs.VERSION }}
+      project_key: ${{ steps.project_key.outputs.KEY }}
+   
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+ 
+      - name: Extraer versión
+        id: version
+        run: |
+          VERSION=$(jq -r '.version' package.json)
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+ 
+      - name: Extraer projectKey
+        id: project_key
+        run: |
+          KEY=$(grep -oP '^sonar.projectKey=\K.*' sonar-project.properties)
+          echo "KEY=$KEY" >> $GITHUB_OUTPUT
+ 
+  sonar:
+    needs: [entorno, build]
+    uses: stemdo-labs/S-SDLC_SonarQube/.github/workflows/sonarqube-analysis.yml@main
+    with:
+      version: ${{ needs.build.outputs.version }}
+      project_key: ${{ needs.build.outputs.project_key }}
+      entorno: ${{ needs.entorno.outputs.entorno }}
+      rama: main
+    secrets: inherit
+ 
+  ci:
+    needs: [entorno, build, sonar]
+    uses: stemdo-labs/final-project-exercise-aitorcajas/.github/workflows/ci.yml@develop
+    with:
+      entorno: ${{ needs.entorno.outputs.entorno }}
+      desarrollo: ${{ needs.entorno.outputs.desarrollo }}
+      version: ${{ needs.build.outputs.version }}
+    secrets: inherit
+ 
+  cd:
+    needs: [ci, entorno]
+    uses: stemdo-labs/final-project-exercise-aitorcajas/.github/workflows/cd.yml@develop
+    with:
+      desarrollo: ${{ needs.entorno.outputs.desarrollo }}
+      entorno: ${{ needs.entorno.outputs.entorno }}
+    secrets: inherit
