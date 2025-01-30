@@ -6,7 +6,7 @@ on:
       - created
  
 jobs:
-  entorno-release:
+  entorno:
     uses: stemdo-labs/final-project-exercise-aitorcajas/.github/workflows/environment-release.yml@main
  
   build:
