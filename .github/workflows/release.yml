@@ -68,7 +68,7 @@ jobs:
 
   zap:
     needs: [cd, entorno]
-    uses: stemdo-labs/S-SDLC_OWASP-ZAP/.github/workflows/scan_with_ZAP.yaml@feature/action-dojo
+    uses: stemdo-labs/S-SDLC_OWASP-ZAP/.github/workflows/scan_with_ZAP.yaml@feature/acion-dojo
     with:
       target_url: http://${{ needs.cd.outputs.route_host }}/
       release: ${{ needs.entorno.outputs.rama }}
