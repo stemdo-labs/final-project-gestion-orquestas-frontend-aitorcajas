@@ -1,4 +1,4 @@
-name: CI-CD frontend && SonarQube
+name: CI-CD frontend SonarQube DefectDojo
  
 on:
   release:
