@@ -68,3 +68,4 @@ jobs:
     with:
       target_url: http://${{ needs.cd.outputs.route_host }}/
       release: ${{ needs.entorno.outputs.rama }}
+      environment: ${{ needs.entorno.outputs.entorno }}
