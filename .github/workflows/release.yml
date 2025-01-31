@@ -47,7 +47,7 @@ jobs:
  
   ci:
     needs: [entorno, build, sonar]
-    uses: stemdo-labs/final-project-exercise-aitorcajas/.github/workflows/ci.yml@develop
+    uses: stemdo-labs/final-project-exercise-aitorcajas/.github/workflows/ci.yml@main
     with:
       entorno: ${{ needs.entorno.outputs.entorno }}
       desarrollo: ${{ needs.entorno.outputs.desarrollo }}
@@ -56,8 +56,15 @@ jobs:
  
   cd:
     needs: [ci, entorno]
-    uses: stemdo-labs/final-project-exercise-aitorcajas/.github/workflows/cd.yml@develop
+    uses: stemdo-labs/final-project-exercise-aitorcajas/.github/workflows/cd.yml@main
     with:
       desarrollo: ${{ needs.entorno.outputs.desarrollo }}
       entorno: ${{ needs.entorno.outputs.entorno }}
     secrets: inherit
+
+  zap:
+    needs: [cd, entorno]
+    uses: stemdo-labs/S-SDLC_OWASP-ZAP/.github/workflows/scan_with_ZAP.yaml@main
+    with:
+      target_url: http://${{ needs.cd.outputs.route_host }}/
+      release: ${{ needs.entorno.outputs.rama }}
